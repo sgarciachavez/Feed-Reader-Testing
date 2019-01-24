@@ -18,5 +18,5 @@ follow the instruction below:
 5. Navigate to the "Feed-Reader-Testing-master" folder, expand the folder and double click on the file name "index.html" 
 to initiate the testing.
 6. The index.html file will open in your default browser.
-7. Once the file is loaded in your browser, you will need to wait approximately 9-10 seconds for the tesing to complete
+7. Once the file is loaded in your browser, you will need to wait approximately 15-16 seconds for the tesing to complete
 8. The final testing results will display at the bottom of the page. 
