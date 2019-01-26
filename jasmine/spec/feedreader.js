@@ -37,8 +37,7 @@ $(function() {
         it('url is valid', function(){
           allFeeds.forEach(function(element){
             expect(element.url).toBeDefined();
-            expect(isStr(element.url)).toBe(true); //This checked is the value is a string and NOT null or empty
-            expect(isURL(element.url)).toBe(true);
+            expect(element.url.length).not.toBe(0);
           });
         });
 
@@ -50,7 +49,7 @@ $(function() {
          it('name is valid', function(){
            allFeeds.forEach(function(element){
              expect(element.name).toBeDefined();
-             expect(isStr(element.name)).toBe(true);
+             expect(element.name.length).not.toBe(0);
            });
          });
     });
@@ -63,7 +62,6 @@ $(function() {
       beforeEach(function(){
         element = document.querySelector('body');
         menu = document.querySelector('.menu-icon-link');
-        spy = spyOn(menu, 'click').and.callThrough();
       });
       /* TODO: Write a test that ensures the menu element is
        * hidden by default. You'll have to analyze the HTML and
@@ -82,12 +80,12 @@ $(function() {
         it('visibility changes when clicked', function(){
           //1st Click
           menu.click();
-          expect(menu.click).toHaveBeenCalled();
+          //menu is NOT hidden
           expect(hasClass(element, 'menu-hidden')).toBe(false);
 
           //2nd click
           menu.click();
-          expect(menu.click).toHaveBeenCalled();
+          //menu is hidden again
           expect(hasClass(element, 'menu-hidden')).toBe(true);
         });
 
@@ -109,13 +107,11 @@ $(function() {
 
        it("loadFeed function called and completed", function(done) {
          let container = document.querySelector('.feed');
-         let link = container.firstElementChild;
-         let entry = link.firstElementChild;
+         let entry = document.querySelector('.feed .entry');
 
-         let urlvalue = link.getAttributeNode('href').value;
-         console.log(urlvalue);
-         expect(container.hasChildNodes()).toBe(true);
-         expect(hasClass(entry, 'entry')).toBe(true);
+         //console.log(container.childNodes.length);
+         expect(container.childNodes.length).not.toBe(0);
+         expect(entry).toBeDefined();
          done();
   });
     });
@@ -126,52 +122,31 @@ $(function() {
        * by the loadFeed function that the content actually changes.
        * Remember, loadFeed() is asynchronous.
        */
-       let urlvalue;
 
+       var first, second;
        beforeEach(function(done) {
+
+         loadFeed(0, function(){
+           first = document.querySelector('.feed .entry');
+         });
+
          setTimeout(function() {
-           loadFeed(0);
-           done();
-         }, 3000);
+           loadFeed(1, function(){
+             second = document.querySelector('.feed .entry');
+             // console.log(first);
+             // console.log(second);
+             done();
+          }, 3000);
+         });
+
        });
-       it("Initial call to loadFeed(0)", function(done) {
-         let container = document.querySelector('.feed');
-         let link = container.firstElementChild;
-         urlvalue = link.getAttributeNode('href').value;
-         expect(isURL(urlvalue)).toBe(true);
+       it("Data changed loadFeed(0) vs loadFeed(1)", function(done) {
+         expect(first).not.toEqual(second);
          done();
        });
-       // let link = document.querySelector('.feed').firstElementChild;
-       // let urlvalue = link.getAttributeNode('href').value;
-       // console.log(urlvalue);
-
-       beforeEach(function(done) {
-         setTimeout(function() {
-           loadFeed(1);
-           done();
-         }, 3000);
-       });
-       it("2nd call to loadFeed(1) - content changed", function(done) {
-         let container = document.querySelector('.feed');
-         let link = container.firstElementChild;
-         let urlvalue2 = link.getAttributeNode('href').value;
-         expect(isURL(urlvalue2)).toBe(true);
-         expect(urlvalue === urlvalue2).toBe(false);
-         done();
-       });
-
     });
 
 }());
-
-function isURL(str){
-  let pattern = new RegExp(/^((http[s]?|ftp):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$/);
-  return pattern.test(str);
-}
-
-function isStr(str){
-  return (typeof str === "string" && str.trim().length > 0 );
-}
 
 function hasClass(el, className){
   return (el.classList.contains(className));
